@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "items": {
+    "iron_ore": {
+      "id": "iron_ore",
+      "name": "Iron Ore",
+      "type": "material",
+      "stackable": true,
+      "maxStack": 99,
+      "rarity": "common",
+      "value": 3,
+      "tags": ["ore", "metal", "blacksmithing"],
+      "description": "A chunk of raw iron ore."
+    },
+    "coal": {
+      "id": "coal",
+      "name": "Coal",
+      "type": "material",
+      "stackable": true,
+      "maxStack": 99,
+      "rarity": "common",
+      "value": 2,
+      "tags": ["fuel", "smelting"],
+      "description": "A basic fuel used for early smelting."
+    },
+    "iron_ingot": {
+      "id": "iron_ingot",
+      "name": "Iron Ingot",
+      "type": "component",
+      "stackable": true,
+      "maxStack": 99,
+      "rarity": "common",
+      "value": 10,
+      "tags": ["metal", "component", "blacksmithing"],
+      "description": "A refined iron bar ready for crafting."
+    },
+    "pickaxe_basic": {
+      "id": "pickaxe_basic",
+      "name": "Basic Pickaxe",
+      "type": "tool",
+      "stackable": false,
+      "rarity": "common",
+      "value": 15,
+      "tags": ["tool", "mining"],
+      "description": "A simple pickaxe for starter resource nodes."
+    }
+  },
+  "professions": {
+    "blacksmithing": {
+      "id": "blacksmithing",
+      "name": "Blacksmithing",
+      "type": "crafting",
+      "maxLevel": 100,
+      "description": "Craft metal bars, tools, weapons, and armor."
+    },
+    "mining": {
+      "id": "mining",
+      "name": "Mining",
+      "type": "gathering",
+      "maxLevel": 100,
+      "description": "Gather ore, stone, coal, and other raw minerals."
+    }
+  },
+  "recipes": {
+    "iron_ingot_from_ore": {
+      "id": "iron_ingot_from_ore",
+      "name": "Smelt Iron Ingot",
+      "profession": "blacksmithing",
+      "levelRequired": 1,
+      "inputs": [
+        { "itemId": "iron_ore", "quantity": 3 },
+        { "itemId": "coal", "quantity": 1 }
+      ],
+      "outputs": [
+        { "itemId": "iron_ingot", "quantity": 1 }
+      ],
+      "craftTimeSeconds": 5,
+      "tags": ["smelting", "metal"]
+    }
+  },
+  "resourceNodes": {
+    "starter_iron_vein": {
+      "id": "starter_iron_vein",
+      "name": "Starter Iron Vein",
+      "type": "mining",
+      "levelRequired": 1,
+      "toolRequired": "pickaxe_basic",
+      "outputs": [
+        { "itemId": "iron_ore", "quantityMin": 1, "quantityMax": 3, "weight": 80 },
+        { "itemId": "coal", "quantityMin": 1, "quantityMax": 1, "weight": 20 }
+      ],
+      "tags": ["ore", "starter", "blacksmithing"]
+    }
+  }
+}
