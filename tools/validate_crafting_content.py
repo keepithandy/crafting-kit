@@ -34,6 +34,20 @@ def is_non_empty_string(value: Any) -> bool:
     return isinstance(value, str) and bool(value.strip())
 
 
+def validate_tags(path: str, tags: Any, errors: list[str]) -> None:
+    """Validate an optional list of non-empty tag strings."""
+    if tags is None:
+        return
+
+    if not isinstance(tags, list):
+        errors.append(f"{path}.tags must be a list when present.")
+        return
+
+    for index, tag in enumerate(tags):
+        if not is_non_empty_string(tag):
+            errors.append(f"{path}.tags[{index}] must be a non-empty string.")
+
+
 def validate_id_map(section_name: str, value: Any, errors: list[str]) -> dict[str, Any]:
     """Validate that a top-level content section is an object map."""
     if value is None:
@@ -86,11 +100,7 @@ def validate_items(items: dict[str, Any], errors: list[str]) -> set[str]:
         if value is not None and not isinstance(value, (int, float)):
             errors.append(f"{path}.value must be numeric when present.")
 
-        tags = item.get("tags")
-        if tags is not None and not all(is_non_empty_string(tag) for tag in tags if isinstance(tags, list)):
-            errors.append(f"{path}.tags must be a list of non-empty strings when present.")
-        elif tags is not None and not isinstance(tags, list):
-            errors.append(f"{path}.tags must be a list when present.")
+        validate_tags(path, item.get("tags"), errors)
 
     return known_item_ids
 
@@ -161,6 +171,8 @@ def validate_professions(professions: dict[str, Any], errors: list[str]) -> set[
         if max_level is not None and not is_positive_int(max_level):
             errors.append(f"{path}.maxLevel must be a positive integer when present.")
 
+        validate_tags(path, profession.get("tags"), errors)
+
     return known_profession_ids
 
 
@@ -203,6 +215,12 @@ def validate_recipes(
         if level_required is not None and not is_positive_int(level_required):
             errors.append(f"{path}.levelRequired must be a positive integer when present.")
 
+        craft_time = recipe.get("craftTimeSeconds")
+        if craft_time is not None and not is_positive_int(craft_time):
+            errors.append(f"{path}.craftTimeSeconds must be a positive integer when present.")
+
+        validate_tags(path, recipe.get("tags"), errors)
+
 
 def validate_resource_nodes(
     resource_nodes: dict[str, Any],
@@ -232,39 +250,55 @@ def validate_resource_nodes(
         if not is_non_empty_string(node_type):
             errors.append(f"{path}.type must be a non-empty string.")
 
+        level_required = node.get("levelRequired")
+        if level_required is not None and not is_positive_int(level_required):
+            errors.append(f"{path}.levelRequired must be a positive integer when present.")
+
+        tool_required = node.get("toolRequired")
+        if tool_required is not None:
+            if not is_non_empty_string(tool_required):
+                errors.append(f"{path}.toolRequired must be a non-empty string when present.")
+            elif tool_required not in known_item_ids:
+                errors.append(f"{path}.toolRequired references unknown item '{tool_required}'.")
+
         outputs = node.get("outputs")
         if not isinstance(outputs, list) or not outputs:
             errors.append(f"{path}.outputs must be a non-empty list.")
-            continue
+        else:
+            for index, output in enumerate(outputs):
+                output_path = f"{path}.outputs[{index}]"
 
-        for index, output in enumerate(outputs):
-            output_path = f"{path}.outputs[{index}]"
+                if not isinstance(output, dict):
+                    errors.append(f"{output_path} must be an object.")
+                    continue
 
-            if not isinstance(output, dict):
-                errors.append(f"{output_path} must be an object.")
-                continue
+                item_id = output.get("itemId")
+                quantity_min = output.get("quantityMin")
+                quantity_max = output.get("quantityMax")
+                weight = output.get("weight")
 
-            item_id = output.get("itemId")
-            quantity_min = output.get("quantityMin")
-            quantity_max = output.get("quantityMax")
-            weight = output.get("weight")
+                if not is_non_empty_string(item_id):
+                    errors.append(f"{output_path}.itemId must be a non-empty string.")
+                elif item_id not in known_item_ids:
+                    errors.append(f"{output_path}.itemId references unknown item '{item_id}'.")
 
-            if not is_non_empty_string(item_id):
-                errors.append(f"{output_path}.itemId must be a non-empty string.")
-            elif item_id not in known_item_ids:
-                errors.append(f"{output_path}.itemId references unknown item '{item_id}'.")
+                if not is_positive_int(quantity_min):
+                    errors.append(f"{output_path}.quantityMin must be a positive integer.")
 
-            if not is_positive_int(quantity_min):
-                errors.append(f"{output_path}.quantityMin must be a positive integer.")
+                if not is_positive_int(quantity_max):
+                    errors.append(f"{output_path}.quantityMax must be a positive integer.")
 
-            if not is_positive_int(quantity_max):
-                errors.append(f"{output_path}.quantityMax must be a positive integer.")
+                if (
+                    is_positive_int(quantity_min)
+                    and is_positive_int(quantity_max)
+                    and quantity_min > quantity_max
+                ):
+                    errors.append(f"{output_path}.quantityMin cannot be greater than quantityMax.")
 
-            if is_positive_int(quantity_min) and is_positive_int(quantity_max) and quantity_min > quantity_max:
-                errors.append(f"{output_path}.quantityMin cannot be greater than quantityMax.")
+                if weight is not None and not is_positive_int(weight):
+                    errors.append(f"{output_path}.weight must be a positive integer when present.")
 
-            if weight is not None and not is_positive_int(weight):
-                errors.append(f"{output_path}.weight must be a positive integer when present.")
+        validate_tags(path, node.get("tags"), errors)
 
 
 def validate_content(content: Any) -> list[str]:
