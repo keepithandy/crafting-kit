@@ -29,7 +29,23 @@ Early-stage project.
 
 This repository is currently being used to define architecture, system boundaries, documentation, and future implementation goals.
 
-The focus right now is identifying what belongs in a reusable crafting framework before committing to a specific game direction.
+The first working tool is a read-only Python validator for Crafting Kit content packs.
+
+## Quick Start
+
+Validate the starter content example:
+
+```bash
+python tools/validate_crafting_content.py examples/starter-content.json
+```
+
+Expected result:
+
+```text
+Crafting content is valid.
+```
+
+The validator checks item IDs, recipe inputs and outputs, profession references, resource node outputs, positive quantities, tag lists, and other basic schema rules.
 
 ## Planned Features
 
