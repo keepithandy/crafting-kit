@@ -33,6 +33,21 @@ def is_positive_int(value: Any) -> bool:
     return isinstance(value, int) and value > 0
 
 
+def get_inventory_quantity(inventory: Inventory, item_id: str) -> int:
+    """Return a safe non-negative inventory quantity.
+
+    Malformed, missing, or negative values are treated as zero so recipe checks
+    fail safely instead of raising type errors.
+    """
+
+    quantity = inventory.get(item_id, 0)
+
+    if not isinstance(quantity, int) or quantity < 0:
+        return 0
+
+    return quantity
+
+
 def validate_items(items: Any) -> ValidationResult:
     """Validate the item table used by recipes and inventories."""
 
@@ -159,7 +174,7 @@ def can_craft(recipe: dict[str, Any], inventory: Inventory) -> bool:
         if not isinstance(item_id, str) or not is_positive_int(quantity):
             return False
 
-        if inventory.get(item_id, 0) < quantity:
+        if get_inventory_quantity(inventory, item_id) < quantity:
             return False
 
     return True
@@ -180,7 +195,7 @@ def craft(recipe: dict[str, Any], inventory: Inventory) -> Inventory:
     for stack in recipe["inputs"]:
         item_id = stack["itemId"]
         quantity = stack["quantity"]
-        next_inventory[item_id] = next_inventory.get(item_id, 0) - quantity
+        next_inventory[item_id] = get_inventory_quantity(next_inventory, item_id) - quantity
 
         if next_inventory[item_id] <= 0:
             del next_inventory[item_id]
@@ -188,7 +203,7 @@ def craft(recipe: dict[str, Any], inventory: Inventory) -> Inventory:
     for stack in recipe.get("outputs", []):
         item_id = stack["itemId"]
         quantity = stack["quantity"]
-        next_inventory[item_id] = next_inventory.get(item_id, 0) + quantity
+        next_inventory[item_id] = get_inventory_quantity(next_inventory, item_id) + quantity
 
     return next_inventory
 
