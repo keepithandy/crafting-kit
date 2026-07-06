@@ -29,7 +29,7 @@ Early-stage project.
 
 This repository is currently being used to define architecture, system boundaries, documentation, and future implementation goals.
 
-The first working tool is a read-only Python validator for Crafting Kit content packs.
+The first working tool is a read-only Python validator for Crafting Kit content packs. The second working helper is a read-only crafting dry-run function that previews whether a recipe can be crafted from an inventory object without mutating the input inventory.
 
 ## Quick Start
 
@@ -46,6 +46,26 @@ Crafting content is valid.
 ```
 
 The validator checks item IDs, recipe inputs and outputs, profession references, resource node outputs, positive quantities, tag lists, and other basic schema rules.
+
+Run the dry-run helper from Python:
+
+```python
+import json
+from pathlib import Path
+
+from tools.crafting_dry_run import crafting_dry_run
+
+content = json.loads(Path("examples/starter-content.json").read_text(encoding="utf-8"))
+
+craftable = crafting_dry_run(content, "iron_ingot_from_ore", {"iron_ore": 3, "coal": 1})
+blocked = crafting_dry_run(content, "iron_ingot_from_ore", {"iron_ore": 1, "coal": 0})
+```
+
+Run the dry-run tests:
+
+```bash
+python -m unittest discover -s tests
+```
 
 ## Planned Features
 
