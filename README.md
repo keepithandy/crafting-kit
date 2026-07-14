@@ -29,7 +29,14 @@ Early-stage project.
 
 This repository is currently being used to define architecture, system boundaries, documentation, and future implementation goals.
 
-The first working tool is a read-only Python validator for Crafting Kit content packs. The second working helper is a read-only crafting dry-run function that previews whether a recipe can be crafted from an inventory object without mutating the input inventory.
+Working helpers and artifacts now include:
+
+- A read-only Python validator for Crafting Kit content packs.
+- A read-only crafting dry-run helper that previews recipe requirements and results without mutating inventory.
+- A read-only gathering dry-run helper that previews resource-node gates and output tables without mutating inventory.
+- Expanded starter content with multiple recipes, professions, and resource-node examples.
+- A browser-only crafting interface prototype for recipe selection, mock inventory display, craftable/blocked states, and result preview.
+- Documentation for resource gathering, profession progression, and first-pass economic balance.
 
 ## Quick Start
 
@@ -54,11 +61,19 @@ import json
 from pathlib import Path
 
 from tools.crafting_dry_run import crafting_dry_run
+from tools.gathering_dry_run import gathering_dry_run
 
 content = json.loads(Path("examples/starter-content.json").read_text(encoding="utf-8"))
 
 craftable = crafting_dry_run(content, "iron_ingot_from_ore", {"iron_ore": 3, "coal": 1})
 blocked = crafting_dry_run(content, "iron_ingot_from_ore", {"iron_ore": 1, "coal": 0})
+
+harvest_preview = gathering_dry_run(
+    content,
+    "starter_iron_vein",
+    actor={"levels": {"mining": 1}},
+    inventory={"pickaxe_basic": 1},
+)
 ```
 
 Run the dry-run tests:
@@ -66,6 +81,18 @@ Run the dry-run tests:
 ```bash
 python -m unittest discover -s tests
 ```
+
+Open the browser prototype directly:
+
+```text
+prototype/crafting-interface.html
+```
+
+## Current Architecture Docs
+
+- `docs/resource-gathering-framework.md`
+- `docs/profession-progression-architecture.md`
+- `docs/economic-balance-layer.md`
 
 ## Planned Features
 
