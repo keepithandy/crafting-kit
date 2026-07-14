@@ -43,6 +43,71 @@
       "value": 15,
       "tags": ["tool", "mining"],
       "description": "A simple pickaxe for starter resource nodes."
+    },
+    "wild_herb": {
+      "id": "wild_herb",
+      "name": "Wild Herb",
+      "type": "material",
+      "stackable": true,
+      "maxStack": 99,
+      "rarity": "common",
+      "value": 2,
+      "tags": ["herb", "alchemy", "gathering"],
+      "description": "A starter herb used in simple remedies."
+    },
+    "water_vial": {
+      "id": "water_vial",
+      "name": "Water Vial",
+      "type": "material",
+      "stackable": true,
+      "maxStack": 99,
+      "rarity": "common",
+      "value": 1,
+      "tags": ["vial", "alchemy"],
+      "description": "A small vial of clean water."
+    },
+    "healing_potion": {
+      "id": "healing_potion",
+      "name": "Healing Potion",
+      "type": "consumable",
+      "stackable": true,
+      "maxStack": 20,
+      "rarity": "common",
+      "value": 8,
+      "tags": ["potion", "alchemy", "healing"],
+      "description": "A basic potion created from herbs and water."
+    },
+    "cloth_scrap": {
+      "id": "cloth_scrap",
+      "name": "Cloth Scrap",
+      "type": "material",
+      "stackable": true,
+      "maxStack": 99,
+      "rarity": "common",
+      "value": 1,
+      "tags": ["cloth", "tailoring"],
+      "description": "A small piece of usable cloth."
+    },
+    "thread": {
+      "id": "thread",
+      "name": "Thread",
+      "type": "material",
+      "stackable": true,
+      "maxStack": 99,
+      "rarity": "common",
+      "value": 1,
+      "tags": ["thread", "tailoring"],
+      "description": "Starter sewing thread."
+    },
+    "simple_cloak": {
+      "id": "simple_cloak",
+      "name": "Simple Cloak",
+      "type": "equipment",
+      "stackable": false,
+      "rarity": "common",
+      "value": 7,
+      "tags": ["armor", "tailoring"],
+      "description": "A plain cloak made from starter cloth."
     }
   },
   "professions": {
@@ -59,6 +124,27 @@
       "type": "gathering",
       "maxLevel": 100,
       "description": "Gather ore, stone, coal, and other raw minerals."
+    },
+    "alchemy": {
+      "id": "alchemy",
+      "name": "Alchemy",
+      "type": "crafting",
+      "maxLevel": 100,
+      "description": "Craft potions, oils, and reagent-based consumables."
+    },
+    "tailoring": {
+      "id": "tailoring",
+      "name": "Tailoring",
+      "type": "crafting",
+      "maxLevel": 100,
+      "description": "Craft cloth equipment and stitched components."
+    },
+    "herbalism": {
+      "id": "herbalism",
+      "name": "Herbalism",
+      "type": "gathering",
+      "maxLevel": 100,
+      "description": "Gather herbs, roots, flowers, and natural reagents."
     }
   },
   "recipes": {
@@ -76,6 +162,51 @@
       ],
       "craftTimeSeconds": 5,
       "tags": ["smelting", "metal"]
+    },
+    "brew_healing_potion": {
+      "id": "brew_healing_potion",
+      "name": "Brew Healing Potion",
+      "profession": "alchemy",
+      "levelRequired": 1,
+      "inputs": [
+        { "itemId": "wild_herb", "quantity": 2 },
+        { "itemId": "water_vial", "quantity": 1 }
+      ],
+      "outputs": [
+        { "itemId": "healing_potion", "quantity": 1 }
+      ],
+      "craftTimeSeconds": 8,
+      "tags": ["potion", "healing"]
+    },
+    "stitch_simple_cloak": {
+      "id": "stitch_simple_cloak",
+      "name": "Stitch Simple Cloak",
+      "profession": "tailoring",
+      "levelRequired": 1,
+      "inputs": [
+        { "itemId": "cloth_scrap", "quantity": 4 },
+        { "itemId": "thread", "quantity": 2 }
+      ],
+      "outputs": [
+        { "itemId": "simple_cloak", "quantity": 1 }
+      ],
+      "craftTimeSeconds": 10,
+      "tags": ["cloth", "armor"]
+    },
+    "forge_basic_pickaxe": {
+      "id": "forge_basic_pickaxe",
+      "name": "Forge Basic Pickaxe",
+      "profession": "blacksmithing",
+      "levelRequired": 2,
+      "inputs": [
+        { "itemId": "iron_ingot", "quantity": 2 },
+        { "itemId": "coal", "quantity": 1 }
+      ],
+      "outputs": [
+        { "itemId": "pickaxe_basic", "quantity": 1 }
+      ],
+      "craftTimeSeconds": 14,
+      "tags": ["tool", "mining"]
     }
   },
   "resourceNodes": {
@@ -90,6 +221,28 @@
         { "itemId": "coal", "quantityMin": 1, "quantityMax": 1, "weight": 20 }
       ],
       "tags": ["ore", "starter", "blacksmithing"]
+    },
+    "wild_herb_patch": {
+      "id": "wild_herb_patch",
+      "name": "Wild Herb Patch",
+      "type": "herbalism",
+      "levelRequired": 1,
+      "outputs": [
+        { "itemId": "wild_herb", "quantityMin": 1, "quantityMax": 3, "weight": 85 },
+        { "itemId": "water_vial", "quantityMin": 1, "quantityMax": 1, "weight": 15 }
+      ],
+      "tags": ["herb", "starter", "alchemy"]
+    },
+    "abandoned_supply_crate": {
+      "id": "abandoned_supply_crate",
+      "name": "Abandoned Supply Crate",
+      "type": "scavenging",
+      "levelRequired": 1,
+      "outputs": [
+        { "itemId": "cloth_scrap", "quantityMin": 1, "quantityMax": 4, "weight": 70 },
+        { "itemId": "thread", "quantityMin": 1, "quantityMax": 2, "weight": 30 }
+      ],
+      "tags": ["cloth", "starter", "tailoring"]
     }
   }
 }
