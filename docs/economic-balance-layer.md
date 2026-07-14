@@ -21,7 +21,7 @@ Starter content uses a rough value model:
 | Smelt Iron Ingot | 11 | 10 | Slight value loss; smelting is a conversion step, not a profit printer |
 | Brew Healing Potion | 5 | 8 | Modest value gain; useful consumable output |
 | Stitch Simple Cloak | 6 | 7 | Small value gain; starter equipment |
-| Forge Basic Pickaxe | 21 | 15 | Value loss; pickaxe is utility/tool access, not resale profit |
+| Forge Basic Pickaxe | 22 | 15 | Value loss; pickaxe is utility/tool access, not resale profit |
 
 ## Infinite-profit risk checks
 
