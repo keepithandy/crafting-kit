@@ -43,6 +43,11 @@ function renderInventory() {
     .join("");
 }
 
+function renderRecipeDetail() {
+  const detail = document.getElementById("recipeDetail");
+  detail.innerHTML = `<h3>${selectedRecipe.name}</h3><p><strong>Profession:</strong> ${selectedRecipe.profession}</p><h4>Requirements</h4><ul class="detail-list">${selectedRecipe.inputs.map(([itemId, quantity]) => `<li><span>${itemId}</span><strong>${quantity} required</strong></li>`).join("")}</ul><p><strong>Output:</strong> ${selectedRecipe.output}</p>`;
+}
+
 function renderResult() {
   const result = document.getElementById("resultCard");
   const craftable = canCraft(selectedRecipe);
@@ -51,6 +56,7 @@ function renderResult() {
 
 function render() {
   renderRecipes();
+  renderRecipeDetail();
   renderInventory();
   renderResult();
 }

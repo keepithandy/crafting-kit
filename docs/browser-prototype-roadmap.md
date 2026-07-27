@@ -15,7 +15,7 @@ preview surface while the Python helpers and content contracts remain independen
 
 ## Upcoming issues
 
-- [ ] #19 — Build the semantic crafting interface shell.
+- [x] #19 — Build the semantic crafting interface shell (local implementation complete; not yet published).
 - [x] #21 — Create the responsive Crafting Kit design system (local CSS pass complete; not published).
 - [ ] #20 — Add the browser state and rendering controller improvements.
 - [ ] #22 — Define the content-loading boundary.

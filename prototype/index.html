@@ -9,27 +9,48 @@
   </head>
   <body>
     <main>
-      <section class="hero" aria-labelledby="page-title">
+      <header class="hero" aria-labelledby="page-title">
         <span class="pill">Read-only prototype</span>
         <h1 id="page-title">Crafting Kit Interface</h1>
         <p>
           Browser-only surface for recipe selection, material checks, blocked states, and result
           previews. No backend, persistence, or inventory mutation.
         </p>
-      </section>
+      </header>
 
-      <section class="layout" aria-label="Crafting interface">
+      <div class="workspace-grid" aria-label="Crafting interface">
         <section class="panel" aria-labelledby="recipes-heading">
-          <h2 id="recipes-heading">Recipes</h2>
+          <header class="panel-heading">
+            <h2 id="recipes-heading">Recipes</h2>
+            <p>Select a recipe to inspect its requirements.</p>
+          </header>
           <div class="recipe-grid" id="recipeGrid" aria-live="polite"></div>
         </section>
 
-        <section class="panel" aria-labelledby="inventory-heading">
-          <h2 id="inventory-heading">Inventory fixture</h2>
+        <section class="panel" aria-labelledby="detail-heading">
+          <header class="panel-heading">
+            <h2 id="detail-heading">Selected recipe</h2>
+            <p>Read-only requirement detail.</p>
+          </header>
+          <div id="recipeDetail" class="detail-region" aria-live="polite"></div>
+        </section>
+
+        <aside class="panel" aria-labelledby="inventory-heading">
+          <header class="panel-heading">
+            <h2 id="inventory-heading">Inventory fixture</h2>
+            <p>Sample quantities used by the preview.</p>
+          </header>
           <div class="inventory-grid" id="inventoryGrid"></div>
+        </aside>
+
+        <section class="panel" aria-labelledby="result-heading">
+          <header class="panel-heading">
+            <h2 id="result-heading">Result preview</h2>
+            <p>No inventory changes are performed.</p>
+          </header>
           <div class="result-card" id="resultCard" aria-live="polite"></div>
         </section>
-      </section>
+      </div>
     </main>
     <script src="app.js" defer></script>
   </body>
