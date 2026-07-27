@@ -20,6 +20,10 @@ function canCraft(recipe) {
   return recipe.inputs.every(([itemId, quantity]) => (inventory[itemId] || 0) >= quantity);
 }
 
+function itemLabel(itemId) {
+  return itemId.replaceAll("_", " ");
+}
+
 function renderRecipes() {
   const grid = document.getElementById("recipeGrid");
   grid.replaceChildren();
@@ -30,7 +34,8 @@ function renderRecipes() {
     button.type = "button";
     button.className = `recipe-card ${recipe.id === selectedRecipe.id ? "selected" : ""}`;
     button.setAttribute("aria-pressed", String(recipe.id === selectedRecipe.id));
-    button.innerHTML = `<span class="pill">${recipe.profession}</span><h3>${recipe.name}</h3><p>${recipe.inputs.map(([itemId, quantity]) => `${quantity} ${itemId}`).join(", ")}</p><strong class="${craftable ? "ok" : "blocked"}">${craftable ? "Craftable" : "Blocked: missing materials"}</strong>`;
+    button.setAttribute("aria-label", `Select ${recipe.name}`);
+    button.innerHTML = `<span class="pill">${recipe.profession}</span><h3>${recipe.name}</h3><p>${recipe.inputs.map(([itemId, quantity]) => `${quantity} ${itemLabel(itemId)}`).join(", ")}</p><strong class="${craftable ? "ok" : "blocked"}">${craftable ? "Craftable" : "Blocked: missing materials"}</strong>`;
     button.addEventListener("click", () => { selectedRecipe = recipe; render(); });
     grid.appendChild(button);
   });
@@ -39,19 +44,19 @@ function renderRecipes() {
 function renderInventory() {
   const grid = document.getElementById("inventoryGrid");
   grid.innerHTML = Object.entries(inventory)
-    .map(([itemId, quantity]) => `<div class="recipe-card"><strong>${itemId}</strong><p>${quantity} available</p></div>`)
+    .map(([itemId, quantity]) => `<div class="inventory-card"><strong>${itemLabel(itemId)}</strong><p>${quantity} available</p></div>`)
     .join("");
 }
 
 function renderRecipeDetail() {
   const detail = document.getElementById("recipeDetail");
-  detail.innerHTML = `<h3>${selectedRecipe.name}</h3><p><strong>Profession:</strong> ${selectedRecipe.profession}</p><h4>Requirements</h4><ul class="detail-list">${selectedRecipe.inputs.map(([itemId, quantity]) => `<li><span>${itemId}</span><strong>${quantity} required</strong></li>`).join("")}</ul><p><strong>Output:</strong> ${selectedRecipe.output}</p>`;
+  detail.innerHTML = `<h3>${selectedRecipe.name}</h3><dl class="summary-list"><div><dt>Profession</dt><dd>${selectedRecipe.profession}</dd></div><div><dt>Output</dt><dd>${itemLabel(selectedRecipe.output)}</dd></div></dl><h4>Requirements</h4><ul class="detail-list">${selectedRecipe.inputs.map(([itemId, quantity]) => { const available = inventory[itemId] || 0; const ready = available >= quantity; return `<li class="requirement-row"><span>${itemLabel(itemId)}</span><strong class="${ready ? "ok" : "blocked"}">${available} / ${quantity} available</strong></li>`; }).join("")}</ul>`;
 }
 
 function renderResult() {
   const result = document.getElementById("resultCard");
   const craftable = canCraft(selectedRecipe);
-  result.innerHTML = `<h3>${selectedRecipe.name}</h3><p>Output preview: ${selectedRecipe.output}</p><button type="button" disabled>${craftable ? "Craft preview ready" : "Craft blocked"}</button><p class="${craftable ? "ok" : "blocked"}">${craftable ? "All required materials are present." : "One or more required materials are missing."}</p>`;
+  result.innerHTML = `<h3>${selectedRecipe.name}</h3><p>Output preview: <strong>${itemLabel(selectedRecipe.output)}</strong></p><span class="preview-badge ${craftable ? "ok" : "blocked"}">${craftable ? "Preview available" : "Preview blocked"}</span><p class="status-line ${craftable ? "ok" : "blocked"}" role="status">${craftable ? "All required materials are present." : "One or more required materials are missing."}</p>`;
 }
 
 function render() {
