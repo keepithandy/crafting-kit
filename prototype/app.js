@@ -1,4 +1,10 @@
-/* Read-only browser controller for the Crafting Kit prototype. */
+/*
+ * Read-only browser controller for the Crafting Kit prototype.
+ *
+ * This is a replaceable UI layer over the Python/data contracts. It owns
+ * selection state and rendering only; it never mutates inventory or performs
+ * a live crafting action.
+ */
 const inventory = Object.freeze({
   iron_ore: 3,
   coal: 1,
@@ -14,14 +20,35 @@ const recipes = Object.freeze([
   { id: "stitch_simple_cloak", name: "Stitch Simple Cloak", profession: "Tailoring", inputs: [["cloth_scrap", 4], ["thread", 2]], output: "simple_cloak" },
 ]);
 
-let selectedRecipe = recipes[0];
-
-function canCraft(recipe) {
-  return recipe.inputs.every(([itemId, quantity]) => (inventory[itemId] || 0) >= quantity);
-}
+// This is UI selection state, not player or inventory state.
+const state = { selectedRecipeId: recipes[0].id };
 
 function itemLabel(itemId) {
   return itemId.replaceAll("_", " ");
+}
+
+function getSelectedRecipe() {
+  return recipes.find((recipe) => recipe.id === state.selectedRecipeId) || recipes[0];
+}
+
+function previewRecipe(recipe, inventoryState) {
+  const requirements = recipe.inputs.map(([itemId, required]) => {
+    const available = inventoryState[itemId] || 0;
+    return { itemId, required, available, ready: available >= required };
+  });
+
+  return Object.freeze({
+    recipeId: recipe.id,
+    requirements: Object.freeze(requirements),
+    craftable: requirements.every((requirement) => requirement.ready),
+    output: recipe.output,
+  });
+}
+
+function selectRecipe(recipeId) {
+  if (!recipes.some((recipe) => recipe.id === recipeId)) return;
+  state.selectedRecipeId = recipeId;
+  render();
 }
 
 function renderRecipes() {
@@ -29,14 +56,15 @@ function renderRecipes() {
   grid.replaceChildren();
 
   recipes.forEach((recipe) => {
+    const preview = previewRecipe(recipe, inventory);
     const button = document.createElement("button");
-    const craftable = canCraft(recipe);
+    const selected = recipe.id === state.selectedRecipeId;
     button.type = "button";
-    button.className = `recipe-card ${recipe.id === selectedRecipe.id ? "selected" : ""}`;
-    button.setAttribute("aria-pressed", String(recipe.id === selectedRecipe.id));
+    button.className = `recipe-card ${selected ? "selected" : ""}`;
+    button.setAttribute("aria-pressed", String(selected));
     button.setAttribute("aria-label", `Select ${recipe.name}`);
-    button.innerHTML = `<span class="pill">${recipe.profession}</span><h3>${recipe.name}</h3><p>${recipe.inputs.map(([itemId, quantity]) => `${quantity} ${itemLabel(itemId)}`).join(", ")}</p><strong class="${craftable ? "ok" : "blocked"}">${craftable ? "Craftable" : "Blocked: missing materials"}</strong>`;
-    button.addEventListener("click", () => { selectedRecipe = recipe; render(); });
+    button.innerHTML = `<span class="pill">${recipe.profession}</span><h3>${recipe.name}</h3><p>${recipe.inputs.map(([itemId, quantity]) => `${quantity} ${itemLabel(itemId)}`).join(", ")}</p><strong class="${preview.craftable ? "ok" : "blocked"}">${preview.craftable ? "Craftable" : "Blocked: missing materials"}</strong>`;
+    button.addEventListener("click", () => selectRecipe(recipe.id));
     grid.appendChild(button);
   });
 }
@@ -48,22 +76,32 @@ function renderInventory() {
     .join("");
 }
 
-function renderRecipeDetail() {
+function renderRecipeDetail(recipe, preview) {
   const detail = document.getElementById("recipeDetail");
-  detail.innerHTML = `<h3>${selectedRecipe.name}</h3><dl class="summary-list"><div><dt>Profession</dt><dd>${selectedRecipe.profession}</dd></div><div><dt>Output</dt><dd>${itemLabel(selectedRecipe.output)}</dd></div></dl><h4>Requirements</h4><ul class="detail-list">${selectedRecipe.inputs.map(([itemId, quantity]) => { const available = inventory[itemId] || 0; const ready = available >= quantity; return `<li class="requirement-row"><span>${itemLabel(itemId)}</span><strong class="${ready ? "ok" : "blocked"}">${available} / ${quantity} available</strong></li>`; }).join("")}</ul>`;
+  detail.innerHTML = `<h3>${recipe.name}</h3><dl class="summary-list"><div><dt>Profession</dt><dd>${recipe.profession}</dd></div><div><dt>Output</dt><dd>${itemLabel(preview.output)}</dd></div></dl><h4>Requirements</h4><ul class="detail-list">${preview.requirements.map((requirement) => `<li class="requirement-row"><span>${itemLabel(requirement.itemId)}</span><strong class="${requirement.ready ? "ok" : "blocked"}">${requirement.available} / ${requirement.required} available</strong></li>`).join("")}</ul>`;
 }
 
-function renderResult() {
+function renderResult(recipe, preview) {
   const result = document.getElementById("resultCard");
-  const craftable = canCraft(selectedRecipe);
-  result.innerHTML = `<h3>${selectedRecipe.name}</h3><p>Output preview: <strong>${itemLabel(selectedRecipe.output)}</strong></p><span class="preview-badge ${craftable ? "ok" : "blocked"}">${craftable ? "Preview available" : "Preview blocked"}</span><p class="status-line ${craftable ? "ok" : "blocked"}" role="status">${craftable ? "All required materials are present." : "One or more required materials are missing."}</p>`;
+  result.innerHTML = `<h3>${recipe.name}</h3><p>Output preview: <strong>${itemLabel(preview.output)}</strong></p><span class="preview-badge ${preview.craftable ? "ok" : "blocked"}">${preview.craftable ? "Preview available" : "Preview blocked"}</span><p class="status-line ${preview.craftable ? "ok" : "blocked"}" role="status">${preview.craftable ? "All required materials are present." : "One or more required materials are missing."}</p>`;
 }
 
 function render() {
+  const recipe = getSelectedRecipe();
+  const preview = previewRecipe(recipe, inventory);
   renderRecipes();
-  renderRecipeDetail();
+  renderRecipeDetail(recipe, preview);
   renderInventory();
-  renderResult();
+  renderResult(recipe, preview);
 }
+
+const controller = Object.freeze({
+  getState: () => Object.freeze({ selectedRecipeId: state.selectedRecipeId }),
+  previewRecipe,
+  selectRecipe,
+  render,
+});
+
+if (typeof window !== "undefined") window.CraftingKitPrototype = controller;
 
 render();

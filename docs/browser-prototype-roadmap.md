@@ -17,7 +17,7 @@ preview surface while the Python helpers and content contracts remain independen
 
 - [x] #19 — Build the semantic crafting interface shell (local implementation complete; not yet published).
 - [x] #21 — Create the responsive Crafting Kit design system (complete and synchronized).
-- [ ] #20 — Add the browser state and rendering controller improvements.
+- [x] #20 — Add the browser state and rendering controller improvements.
 - [ ] #22 — Define the content-loading boundary.
 - [ ] #23 — Build the recipe browser and requirement detail panel.
 - [ ] #24 — Add read-only inventory, batch, capacity, and quality panels.
