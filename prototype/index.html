@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Read-only Crafting Kit browser prototype." />
+    <title>Crafting Kit Prototype</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <span class="pill">Read-only prototype</span>
+        <h1 id="page-title">Crafting Kit Interface</h1>
+        <p>
+          Browser-only surface for recipe selection, material checks, blocked states, and result
+          previews. No backend, persistence, or inventory mutation.
+        </p>
+      </section>
+
+      <section class="layout" aria-label="Crafting interface">
+        <section class="panel" aria-labelledby="recipes-heading">
+          <h2 id="recipes-heading">Recipes</h2>
+          <div class="recipe-grid" id="recipeGrid" aria-live="polite"></div>
+        </section>
+
+        <section class="panel" aria-labelledby="inventory-heading">
+          <h2 id="inventory-heading">Inventory fixture</h2>
+          <div class="inventory-grid" id="inventoryGrid"></div>
+          <div class="result-card" id="resultCard" aria-live="polite"></div>
+        </section>
+      </section>
+    </main>
+    <script src="app.js" defer></script>
+  </body>
+</html>

@@ -36,6 +36,9 @@ Working helpers and artifacts now include:
 - A read-only gathering dry-run helper that previews resource-node gates and output tables without mutating inventory.
 - Expanded starter content with multiple recipes, professions, and resource-node examples.
 - A browser-only crafting interface prototype for recipe selection, mock inventory display, craftable/blocked states, and result preview.
+- Read-only batch, capacity, profession, quality, and dependency-cycle preview helpers.
+- Read-only economy, gathering timeline, and content-schema compatibility reports.
+- A dependency-free GitHub Actions workflow covering tests and starter-content validation.
 - Documentation for resource gathering, profession progression, and first-pass economic balance.
 
 ## Quick Start
@@ -85,8 +88,17 @@ python -m unittest discover -s tests
 Open the browser prototype directly:
 
 ```text
-prototype/crafting-interface.html
+prototype/index.html
 ```
+
+The older `prototype/crafting-interface.html` path remains as a compatibility entry point.
+
+Browser structure roadmap:
+
+- `prototype/index.html` — semantic browser entry point.
+- `prototype/styles.css` — responsive presentation layer.
+- `prototype/app.js` — read-only browser state and rendering controller.
+- `docs/browser-prototype-roadmap.md` — issue checklist and guardrails.
 
 ## Current Architecture Docs
 
